@@ -121,6 +121,8 @@ This reduces hallucination risk; it cannot guarantee truth. Source quality and v
 
 ProofScore is a normalized learning signal, not cumulative XP. It is based on delayed retention, transfer depth, calibration, topic breadth and verified Teaching Impact. Raw time, notes length, number of messages and repeated easy questions produce no public score.
 
+![ProofMode evidence-gated league](assets/proofmode-league.png)
+
 Duplicate or highly similar answers, repeated partner loops and repeated same-topic farming trigger a **fresh transfer check** or provisional status—not an accusation. The project deliberately does not use unreliable AI-authorship detectors.
 
 ## Verification
