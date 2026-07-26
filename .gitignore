@@ -12,4 +12,4 @@ data/uploads/
 data/exports/
 *.ics
 *.log
-
+assets/[0-9a-f]*.webm

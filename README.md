@@ -6,6 +6,8 @@ ProofMode turns a student's calendar, target mark, and existing notes into an ad
 
 ![ProofMode cockpit](assets/proofmode-cockpit.png)
 
+[Watch the automated working-app tour (WebM)](assets/proofmode-tour.webm)
+
 The prototype was built for **Build with Gemma: GDGoC Aberdeen**. It runs Google's instruction-tuned Gemma 4 E4B QAT model locally through llama.cpp, so private notes and assessment evidence do not need to leave the laptop.
 
 ## What works
