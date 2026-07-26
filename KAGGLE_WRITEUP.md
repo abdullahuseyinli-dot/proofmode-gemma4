@@ -53,3 +53,7 @@ A Windows launcher starts or reuses Gemma and Streamlit, opens an app-style wind
 
 ProofMode changes the key question from “Did you spend time?” to “What can you now retrieve, apply, and teach?” That makes planning adaptive, reminders purposeful, peer competition defensible, and Gemma central to a behaviour-changing learning loop.
 
+### Project links
+
+- Public source: https://github.com/abdullahuseyinli-dot/proofmode-gemma4
+- Working-app tour: https://github.com/abdullahuseyinli-dot/proofmode-gemma4/blob/main/assets/proofmode-tour.webm
