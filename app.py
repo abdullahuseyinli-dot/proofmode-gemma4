@@ -205,6 +205,43 @@ def next_exam(assessments: list[Any]) -> datetime:
     return min(credible_deadlines) if credible_deadlines else now + timedelta(days=14)
 
 
+def hydrate_state_from_database() -> None:
+    """Restore the last local plan when the desktop app opens a new session."""
+    if st.session_state.topics:
+        return
+    database = get_database()
+    topics = database.load_topics()
+    if not topics:
+        return
+    events: list[CalendarEvent] = []
+    for row in database.query("SELECT payload FROM calendar_events ORDER BY start_at"):
+        try:
+            events.append(CalendarEvent.from_mapping(json.loads(row["payload"])))
+        except (KeyError, TypeError, ValueError, json.JSONDecodeError):
+            continue
+    blocks: list[StudyBlock] = []
+    for row in database.query("SELECT payload FROM study_blocks ORDER BY start_at"):
+        try:
+            blocks.append(StudyBlock.from_mapping(json.loads(row["payload"])))
+        except (KeyError, TypeError, ValueError, json.JSONDecodeError):
+            continue
+    assessments = detect_assessments(events)
+    exam_date = next_exam(assessments)
+    exam = next((item for item in assessments if item.kind.lower() == "exam" and item.when == exam_date), None)
+    st.session_state.update(
+        {
+            "course_title": exam.title if exam else "Your adaptive study plan",
+            "exam_summary": "Restored from this device's private ProofMode history.",
+            "exam_date": exam_date,
+            "topics": topics,
+            "calendar_events": events,
+            "assessments": assessments,
+            "study_blocks": blocks,
+            "plan_source": "local_history",
+        }
+    )
+
+
 CREATE_BLOCK_TOOL = [
     {
         "type": "function",
@@ -1053,6 +1090,7 @@ def render_audit() -> None:
 load_css()
 initialise_state()
 get_database().initialize()
+hydrate_state_from_database()
 target_mark, _, _ = render_sidebar()
 render_hero()
 
