@@ -834,7 +834,9 @@ def _minimum_public_reasons(events: Sequence[EvidenceEvent]) -> list[str]:
     delayed = [
         event
         for event in verified
-        if event.kind is EvidenceKind.RETENTION and event.delay_hours >= 20
+        if event.kind is EvidenceKind.RETENTION
+        and event.delay_hours >= 20
+        and clamp(event.score) >= 0.60
     ]
     transfers = [event for event in verified if event.kind is EvidenceKind.TRANSFER]
     reasons: list[str] = []
@@ -886,6 +888,18 @@ def calculate_proof_score(
         and event.event_id not in resolved  # original stays excluded after verification
         and event.integrity_state is not IntegrityState.HELD
     ]
+    # A memorised retrieval challenge is one piece of evidence, however many
+    # times it is replayed. The prompt id is a fingerprint of MCQ text/options.
+    distinct_usable: list[EvidenceEvent] = []
+    seen_retrieval_prompts: set[tuple[str, str]] = set()
+    for event in usable:
+        if event.kind is EvidenceKind.RETENTION and event.prompt_id:
+            retrieval_key = (event.topic_id.casefold(), event.prompt_id)
+            if retrieval_key in seen_retrieval_prompts:
+                continue
+            seen_retrieval_prompts.add(retrieval_key)
+        distinct_usable.append(event)
+    usable = distinct_usable
 
     knowledge_by_topic = _topic_estimates(
         usable,

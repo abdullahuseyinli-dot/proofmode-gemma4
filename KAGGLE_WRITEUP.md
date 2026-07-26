@@ -29,6 +29,10 @@ Peer chat normally rewards confidence or popularity. ProofMode measures whether 
 
 The public ProofScore is normalized to 0–100 from delayed retention, transfer depth, confidence calibration, topic breadth and Teaching Impact. It is not cumulative XP. Raw hours, note length, message volume, repeated easy quizzes and negative peer gains award nothing. Near-duplicate answers, repeated partner loops and same-topic farming become provisional and trigger a fresh transfer challenge. We do not use unreliable AI-authorship detection.
 
+A visual Proof Map turns those rules into a game without weakening them: topic territory unlocks only after passing both a fresh transfer task and delayed retrieval. Clicking, logging time, or generating more questions cannot claim a tile or raise the score.
+
+Delayed proof is measured when a unique question set is first revealed, anchored to the latest prior proof or question exposure. A due calendar block, 20-hour gap, successful Gemma generation and assessment, passing retrieval, fresh retrieval fingerprint and first submission are all required. Fallback attempts cannot alter mastery or public scores; exact submission replays are rejected, and repeated retrieval items cannot supply another delayed check.
+
 ### Evidence-backed teaching
 
 If Gemma needs broader or current knowledge, ProofMode does preparation rather than pretending to “train” the model. It creates a focused web query, ranks sources toward official and academic material, safely extracts a bounded research pack, and instructs Gemma to cite every factual claim. Code rejects unknown citations. A separate Gemma verification pass labels each claim supported, unsupported or uncertain using only the supplied evidence. Answers with unsupported or uncertain claims are held instead of presented as fact. The student can inspect every source and verifier decision.
@@ -39,7 +43,7 @@ This prototype runs Gemma 4 E4B QAT Q4 locally through llama.cpp on an NVIDIA la
 
 The AI Audit visibly records the exact Gemma model, modality, schema, tool call and latency. Raw hidden reasoning is never displayed or stored. Python retains authority over calendar writes, arithmetic, persistence and leaderboard values.
 
-Local inference creates a meaningful privacy advantage: notes, voice, study behaviour and assessment history stay on the student’s device. Web research sends only the search query to public providers. The server binds to localhost.
+Local inference creates a meaningful privacy advantage: notes, study behaviour and assessment history stay on the student’s device. Web research sends only the search query to public providers. The server binds to localhost.
 
 ### Engineering under sprint constraints
 

@@ -69,6 +69,24 @@ CREATE TABLE IF NOT EXISTS study_evidence (
     created_at TEXT NOT NULL
 );
 
+CREATE TABLE IF NOT EXISTS question_issuances (
+    issuance_id TEXT PRIMARY KEY,
+    block_uid TEXT UNIQUE,
+    learner_name TEXT NOT NULL,
+    topic TEXT NOT NULL,
+    issued_at TEXT NOT NULL,
+    anchor_at TEXT,
+    delay_hours REAL NOT NULL DEFAULT 0,
+    prompt_id TEXT NOT NULL,
+    question_source TEXT NOT NULL,
+    questions_payload TEXT NOT NULL,
+    submitted_at TEXT,
+    payload TEXT NOT NULL DEFAULT '{}'
+);
+
+CREATE INDEX IF NOT EXISTS idx_question_issuances_learner_topic
+ON question_issuances(learner_name, topic, issued_at);
+
 CREATE TABLE IF NOT EXISTS peer_rooms (
     code TEXT PRIMARY KEY,
     topic TEXT NOT NULL,

@@ -257,6 +257,33 @@ def test_provisional_high_scores_are_not_public_leaderboard_scores() -> None:
     assert result.provisional_reasons
 
 
+def test_failed_delayed_retrieval_does_not_satisfy_public_delay_gate() -> None:
+    events = [
+        _event("r-a", "a", "retention", 0.59, delay=48, confidence=0.5),
+        _event("r-b", "b", "retention", 0.20, delay=48, confidence=0.3, hours=1),
+        _event("t-a", "a", "transfer", 0.80, confidence=0.8, hours=2),
+        _event("t-b", "b", "transfer", 0.80, confidence=0.8, hours=3),
+    ]
+    result = calculate_proof_score(events, curriculum_topics=["a", "b"])
+
+    assert not result.leaderboard_eligible
+    assert any("delay" in reason.lower() for reason in result.provisional_reasons)
+
+
+def test_replayed_retrieval_prompt_cannot_supply_two_delayed_checks() -> None:
+    events = [
+        _event("r-a-1", "a", "retention", 0.90, delay=48, prompt="same-mcq", confidence=0.9),
+        _event("r-a-2", "a", "retention", 0.95, delay=72, prompt="same-mcq", confidence=0.9, hours=24),
+        _event("t-a", "a", "transfer", 0.80, confidence=0.8, hours=25),
+        _event("t-b", "b", "transfer", 0.80, confidence=0.8, hours=26),
+    ]
+    result = calculate_proof_score(events, curriculum_topics=["a", "b"])
+
+    assert not result.leaderboard_eligible
+    assert result.evidence_count == 3
+    assert any("delay" in reason.lower() for reason in result.provisional_reasons)
+
+
 def test_calibration_rewards_honest_pre_grading_confidence_not_confident_style() -> None:
     outcomes = (0.2, 0.85, 0.35, 0.9)
     kinds = ("retention", "retention", "transfer", "transfer")

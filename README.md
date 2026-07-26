@@ -19,10 +19,11 @@ The prototype was built for **Build with Gemma: GDGoC Aberdeen**. It runs Google
 - Exportable `.ics` plan with two reminders per block.
 - Missed-session recovery through native Gemma function calling.
 - MCQs, open transfer questions, confidence calibration and note-image assessment.
-- Calendar replanning after every Learning Receipt.
+- Calendar replanning after every verified Learning Receipt.
 - Evidence-backed web tutoring with inline citations and a separate claim-verification pass.
 - Peer Teach-Back Arena where a teacher scores only when the learner improves on a new transfer task.
 - ProofScore competition based on verified retention and transfer, with anti-reward-hacking controls.
+- Proof Map territory that unlocks only after passing both fresh transfer and delayed retrieval—not from clicks or time logged.
 - Inspectable AI Audit showing model, modality, tool calls, schemas and latency.
 - Windows desktop app window plus a draggable, always-on-top assistant bubble.
 
@@ -85,11 +86,45 @@ powershell -ExecutionPolicy Bypass -File .\launch-proofmode.ps1 -NoBubble
 
 ## Fresh project setup
 
-Use Python 3.11 and a working local Gemma 4 llama.cpp server:
+Use Python 3.11 and a Gemma 4 E4B QAT Q4 llama.cpp build. Model weights are intentionally not in Git.
+
+1. Install Python dependencies:
 
 ```powershell
-python -m venv .venv
+py -3.11 -m venv .venv
 .\.venv\Scripts\python.exe -m pip install -r requirements.txt
+```
+
+2. Download the E4B instruction-tuned QAT Q4 GGUF and its multimodal projector from Google's [Gemma 4 Hugging Face collection](https://huggingface.co/collections/google/gemma-4) or [QAT collection](https://huggingface.co/collections/google/gemma-4-qat-q4-0). Accept the model terms if prompted. Download a current matching Windows release archive from [llama.cpp releases](https://github.com/ggml-org/llama.cpp/releases), then keep the executable and every bundled runtime DLL together; copying only `llama-server.exe` will not work.
+
+3. Put the files beside the repository using this exact launcher layout (or point `PROOFMODE_GEMMA_HOME` at an equivalent folder):
+
+```text
+parent-folder/
+├── ProofMode/
+└── gemma4/
+    ├── runtime/
+    │   ├── llama-server.exe
+    │   ├── llama-server-impl.dll
+    │   ├── llama.dll
+    │   ├── ggml*.dll
+    │   └── other DLLs from the same release archive
+    └── models/
+        ├── gemma-4-E4B_q4_0-it.gguf
+        └── gemma-4-E4B-it-mmproj.gguf
+```
+
+4. Start both services:
+
+```powershell
+cd ProofMode
+.\launch-proofmode.cmd
+```
+
+The launcher validates the executable, weights and projector before starting a loopback-only server with an 8K context. To use an already-running compatible server instead, set `PROOFMODE_GEMMA_URL` and launch Streamlit directly:
+
+```powershell
+$env:PROOFMODE_GEMMA_URL = "http://127.0.0.1:8080/v1"
 .\.venv\Scripts\python.exe -m streamlit run app.py
 ```
 
@@ -119,9 +154,17 @@ ProofMode does not perform live fine-tuning. For a question that needs broader o
 
 This reduces hallucination risk; it cannot guarantee truth. Source quality and verifier uncertainty remain visible to the student.
 
+The capture below is a real fail-closed run: five sources were prepared, but the verifier found an unsupported claim, so ProofMode held the draft for review.
+
+![ProofMode Evidence and Trust panel](assets/proofmode-verified-tutor.png)
+
 ## Fair competition
 
 ProofScore is a normalized learning signal, not cumulative XP. It is based on delayed retention, transfer depth, calibration, topic breadth and verified Teaching Impact. Raw time, notes length, number of messages and repeated easy questions produce no public score.
+
+The visual Proof Map gives that policy a game layer: a topic remains unassessed, moves into proof-in-progress after usable evidence, and is claimed only when both transfer and delayed-retention gates pass. The map itself never adds points.
+
+Delayed evidence is measured at **question reveal**, not from a calendar checkbox. ProofMode persists a unique issuance, anchors it to the latest prior proof or question exposure, and requires at least 20 hours, successful Gemma-generated questions and assessment, a passing retrieval score, a fresh MCQ fingerprint and a first submission. Exact submission replays are rejected. Offline fallbacks change neither mastery nor public score, while repeated retrieval items cannot supply a second delayed check.
 
 ![ProofMode evidence-gated league](assets/proofmode-league.png)
 
@@ -134,10 +177,14 @@ Duplicate or highly similar answers, repeated partner loops and repeated same-to
 .\.venv\Scripts\python.exe -m compileall -q app.py proofmode desktop_launcher.py
 ```
 
-The test suite covers calendars, recurrence, scheduling, ICS alarms, evidence retrieval, SSRF controls, citation validation, launcher lifecycle, learner scoring and reward-hacking resistance.
+The test suite covers calendars, recurrence, scheduling, ICS alarms, persistent delayed-question issuance, replay prevention, evidence retrieval, SSRF controls, citation validation, launcher lifecycle, learner scoring and reward-hacking resistance.
 
 ## Repository safety
 
-Model weights, runtime binaries, database files, OAuth credentials, API keys and uploads are excluded from version control. Google Calendar OAuth is optional; `.ics` import/export is the guaranteed offline-compatible integration.
+Model weights (`*.gguf`), runtime binaries, database files, OAuth credentials, API keys and uploads are excluded from version control. Google Calendar OAuth is optional; `.ics` import/export is the guaranteed offline-compatible integration.
 
 Application code is released under the MIT License. Gemma weights are not redistributed by this repository and remain governed by their own model terms.
+
+## Design collaboration
+
+The midnight-and-amber interface adapts the strongest visual ideas from our teammate's [Momentum UI exploration](https://github.com/jubaljacob/GDG-Hackathon). Its presentation layer was merged into ProofMode while the verified-learning, calendar, local Gemma and anti-gaming systems remained authoritative.

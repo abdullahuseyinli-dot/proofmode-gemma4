@@ -3,7 +3,7 @@ from __future__ import annotations
 from datetime import datetime, timedelta, timezone
 
 from proofmode.database import depth_for_mark
-from proofmode.learning_engine import topic_priority, update_mastery
+from proofmode.learning_engine import ambition_gap, topic_priority, update_mastery
 from proofmode.services.intervention_service import fallback_intervention
 from proofmode.services.teachback_service import teaching_impact
 
@@ -63,3 +63,9 @@ def test_teaching_impact_requires_both_gain_and_quality() -> None:
     strong = teaching_impact(0.3, 0.7, 1.0)["impact"]
     assert 0 < weak < strong
 
+
+def test_exactly_allocated_plan_is_tight_not_a_positive_buffer() -> None:
+    result = ambition_gap(80, available_minutes=120, required_minutes=120)
+    assert result["status"] == "tight"
+    assert result["gap_minutes"] == 0
+    assert "no buffer" in result["message"]

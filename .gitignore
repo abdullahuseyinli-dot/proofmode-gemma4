@@ -12,4 +12,7 @@ data/uploads/
 data/exports/
 *.ics
 *.log
+*.gguf
+models/
+runtime/
 assets/[0-9a-f]*.webm

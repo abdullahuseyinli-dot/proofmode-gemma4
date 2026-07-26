@@ -69,9 +69,12 @@ def update_mastery(
 
 def ambition_gap(target_mark: float, available_minutes: int, required_minutes: int) -> dict[str, Any]:
     gap = required_minutes - available_minutes
-    if gap <= 0:
+    if gap < 0:
         status = "realistic"
         message = f"The plan has about {abs(gap)} minutes of buffer."
+    elif gap == 0:
+        status = "tight"
+        message = "The plan is fully allocated with no buffer."
     elif gap <= 120:
         status = "tight"
         message = f"The current target needs roughly {gap} more focused minutes."
@@ -79,4 +82,3 @@ def ambition_gap(target_mark: float, available_minutes: int, required_minutes: i
         status = "overcommitted"
         message = f"The target and calendar differ by about {gap} minutes; ProofMode will prioritise essentials."
     return {"status": status, "gap_minutes": gap, "target_mark": target_mark, "message": message}
-

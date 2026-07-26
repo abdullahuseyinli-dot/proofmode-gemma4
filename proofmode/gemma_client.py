@@ -129,7 +129,7 @@ class GemmaClient:
             )
         except (APIConnectionError, APIError) as error:
             raise GemmaUnavailable(
-                "Local Gemma is not reachable. Start it with C:\\Users\\DELL\\gemma4\\start-server.cmd."
+                f"Local Gemma is not reachable at {self.base_url}. Run ProofMode's launcher or set PROOFMODE_GEMMA_URL to a compatible local server."
             ) from error
         latency = int((time.perf_counter() - start) * 1000)
         content = response.choices[0].message.content or ""
@@ -170,7 +170,7 @@ class GemmaClient:
             )
         except (APIConnectionError, APIError) as error:
             raise GemmaUnavailable(
-                "Local Gemma is not reachable. Start it with C:\\Users\\DELL\\gemma4\\start-server.cmd."
+                f"Local Gemma is not reachable at {self.base_url}. Run ProofMode's launcher or set PROOFMODE_GEMMA_URL to a compatible local server."
             ) from error
         latency = int((time.perf_counter() - start) * 1000)
         raw = response.choices[0].message.content or "{}"
@@ -220,4 +220,3 @@ class GemmaClient:
             model=self.model,
             tool_calls=calls,
         )
-
