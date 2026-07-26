@@ -179,6 +179,50 @@ Duplicate or highly similar answers, repeated partner loops and repeated same-to
 
 The test suite covers calendars, recurrence, scheduling, ICS alarms, persistent delayed-question issuance, replay prevention, evidence retrieval, SSRF controls, citation validation, launcher lifecycle, learner scoring and reward-hacking resistance.
 
+### Reproducible real-source benchmark
+
+We also exercised the service layer end to end with downloaded, SHA-256-recorded
+material from scikit-learn, MIT OpenCourseWare, the CDC and NASA/JPL-Caltech.
+Gold topics, facts, rubrics and misconception answers are human-authored and
+inspectable; no model grades its own answer key.
+
+```powershell
+# Check inputs and the local Gemma service without spending inference calls
+.\.venv\Scripts\python.exe .\benchmarks\run_benchmark.py --dry-run
+
+# Download/cache the sources and run every subsystem once
+.\.venv\Scripts\python.exe .\benchmarks\run_benchmark.py --profile quick
+
+# Reproduce the real file/image -> course map -> map-grounded quiz chain
+.\.venv\Scripts\python.exe .\benchmarks\run_benchmark.py `
+  --profile full --suite course_map,questions --repeats 1 --run-label e2e-course-quiz
+```
+
+In the controlled quick-profile comparison, MIME-aware extraction raised gold-span
+recall from `0.625` to `0.8125`, and the calendar engine reduced conflicts from
+170 minutes to zero while preserving full allocation and all 12 reminder alarms.
+Gemma rubric assessment reduced mean absolute error from `0.1667` to `0.0583`
+against human labels. Four adversarial citation fixtures that the old lexical
+fallback marked false-safe were all held after verification hardening (`4/4` to
+`0/4` false-safe). Normalized Teach-Back scoring reduced error from `0.1833` to
+`0.0367`, while a no-learning-gain attack fell from 100 reward units to zero.
+
+The focused chained run completed all `16/16` recorded baseline/product rows
+across four inputs: scikit-learn text, MIT and CDC PDFs, and a NASA infographic.
+Each product quiz consumed its generated course map. All four product paths
+completed with valid schemas and MCQs, but the NASA map matched only two of five
+named visual concepts and its quiz matched zero expected topic terms under the
+exact lexical metric. This proves the image pipeline ran, not comprehensive
+visual understanding.
+
+These are descriptive, single-repeat prototype measurements on small cases, not
+statistical evidence that ProofMode improves real students' retention. Search
+results and local-model latency vary. See the [benchmark results and limitations](benchmarks/RESULTS.md)
+and [reproduction guide](benchmarks/README.md) for case-level definitions and
+controlled comparison instructions. Per-run raw rows and environment files are
+written to the git-ignored `benchmark_artifacts/` folder; they are not public
+unless attached separately.
+
 ## Repository safety
 
 Model weights (`*.gguf`), runtime binaries, database files, OAuth credentials, API keys and uploads are excluded from version control. Google Calendar OAuth is optional; `.ics` import/export is the guaranteed offline-compatible integration.

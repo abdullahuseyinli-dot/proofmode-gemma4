@@ -60,7 +60,7 @@ from proofmode.services.teachback_service import (
     score_transfer,
     teaching_impact,
 )
-from proofmode.services.verification_service import verify_answer
+from proofmode.services.verification_service import select_supported_excerpt, verify_answer
 
 
 st.set_page_config(
@@ -108,6 +108,7 @@ def initialise_state() -> None:
         "research_answer": None,
         "research_pack": None,
         "verification": None,
+        "research_selective_excerpt": False,
         "research_route": None,
         "research_question": "",
         "teach_pair": None,
@@ -1054,6 +1055,7 @@ def render_research() -> None:
         if st.button("Research, teach & verify", type="primary", disabled=not question.strip()):
             st.session_state.research_answer = None
             st.session_state.verification = None
+            st.session_state.research_selective_excerpt = False
             st.session_state.research_pack = None
             st.session_state.research_question = question.strip()
             route = research_route(question)
@@ -1084,7 +1086,8 @@ def render_research() -> None:
                         return get_gemma().chat(
                             "You are a strict claim verifier. Return only the requested JSON; never use outside knowledge.",
                             verification_prompt,
-                            max_tokens=900,
+                            max_tokens=1800,
+                            temperature=0.1,
                         ).content
 
                     with st.spinner("A separate Gemma pass is checking claim support…"):
@@ -1105,6 +1108,11 @@ def render_research() -> None:
                                 max_tokens=1000,
                             ).content
                             report = verify_answer(answer, pack, llm_callback=verifier_callback)
+                    if not report.safe_to_show:
+                        selective = select_supported_excerpt(answer, pack, report)
+                        if selective is not None:
+                            answer, report = selective
+                            st.session_state.research_selective_excerpt = True
                     st.session_state.research_answer = answer
                     st.session_state.verification = report
                 except GemmaUnavailable as error:
@@ -1121,7 +1129,11 @@ def render_research() -> None:
             if stored_question:
                 st.caption(f"Answer to: {stored_question}")
             if report.safe_to_show:
-                st.success(report.summary)
+                if st.session_state.research_selective_excerpt:
+                    st.warning("Narrowed partial answer · unsupported or uncertain claims were omitted.")
+                    st.info(report.summary)
+                else:
+                    st.success(report.summary)
                 st.markdown(answer)
             else:
                 st.error(report.summary)
@@ -1138,7 +1150,10 @@ def render_research() -> None:
         source_state = f"{source_count} source{'s' if source_count != 1 else ''} prepared" if pack else "Waiting for a question"
         source_detail = f"{pack.method} · {pack.status}" if pack else "Search starts only when broader evidence is needed."
         if report:
-            decision = "Source-supported for display" if report.safe_to_show else "Draft held"
+            if report.safe_to_show and st.session_state.research_selective_excerpt:
+                decision = "Narrowed partial answer"
+            else:
+                decision = "Source-supported for display" if report.safe_to_show else "Draft held"
             decision_detail = report.summary
         else:
             decision = "Not evaluated"

@@ -7,6 +7,7 @@ __pycache__/
 credentials.json
 token.json
 data/*.db
+data/*.db-*
 data/*.sqlite*
 data/uploads/
 data/exports/
@@ -16,3 +17,5 @@ data/exports/
 models/
 runtime/
 assets/[0-9a-f]*.webm
+benchmarks/.cache/
+benchmark_artifacts/

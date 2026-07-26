@@ -838,7 +838,11 @@ def _minimum_public_reasons(events: Sequence[EvidenceEvent]) -> list[str]:
         and event.delay_hours >= 20
         and clamp(event.score) >= 0.60
     ]
-    transfers = [event for event in verified if event.kind is EvidenceKind.TRANSFER]
+    transfers = [
+        event
+        for event in verified
+        if event.kind is EvidenceKind.TRANSFER and clamp(event.score) >= 0.60
+    ]
     reasons: list[str] = []
     if len(verified) < 4:
         reasons.append("At least four verified learning checks are needed.")
@@ -847,7 +851,7 @@ def _minimum_public_reasons(events: Sequence[EvidenceEvent]) -> list[str]:
     if len(delayed) < 2:
         reasons.append("Two checks after a delay of at least 20 hours are needed.")
     if not transfers:
-        reasons.append("At least one fresh transfer question is needed.")
+        reasons.append("At least one fresh transfer question scoring 60% or above is needed.")
     return reasons
 
 

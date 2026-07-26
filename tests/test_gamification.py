@@ -270,6 +270,34 @@ def test_failed_delayed_retrieval_does_not_satisfy_public_delay_gate() -> None:
     assert any("delay" in reason.lower() for reason in result.provisional_reasons)
 
 
+def test_public_board_requires_a_passing_transfer_not_just_a_transfer_attempt() -> None:
+    otherwise_eligible = [
+        _event("r-a-1", "a", "retention", 0.90, delay=48, confidence=0.9),
+        _event("r-b", "b", "retention", 0.85, delay=48, confidence=0.85, hours=1),
+        _event("r-a-2", "a", "retention", 0.80, delay=72, confidence=0.8, hours=2),
+    ]
+    failed_transfer = _event(
+        "t-a-failed", "a", "transfer", 0.59, confidence=0.59, hours=3
+    )
+    passing_transfer = _event(
+        "t-a-passed", "a", "transfer", 0.60, confidence=0.60, hours=3
+    )
+
+    failed = calculate_proof_score(
+        [*otherwise_eligible, failed_transfer], curriculum_topics=["a", "b"]
+    )
+    passed = calculate_proof_score(
+        [*otherwise_eligible, passing_transfer], curriculum_topics=["a", "b"]
+    )
+
+    assert failed.integrity_state is IntegrityState.PROVISIONAL
+    assert not failed.leaderboard_eligible
+    assert any("60% or above" in reason for reason in failed.provisional_reasons)
+    assert passed.integrity_state is IntegrityState.VERIFIED
+    assert passed.leaderboard_eligible
+    assert not passed.provisional_reasons
+
+
 def test_replayed_retrieval_prompt_cannot_supply_two_delayed_checks() -> None:
     events = [
         _event("r-a-1", "a", "retention", 0.90, delay=48, prompt="same-mcq", confidence=0.9),

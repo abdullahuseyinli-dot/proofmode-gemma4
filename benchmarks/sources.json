@@ -1,0 +1,140 @@
+{
+  "version": 1,
+  "sources": [
+    {
+      "id": "sklearn_common_pitfalls",
+      "subject": "Machine Learning Reliability",
+      "title": "scikit-learn: Common pitfalls and recommended practices",
+      "url": "https://raw.githubusercontent.com/scikit-learn/scikit-learn/main/doc/common_pitfalls.rst",
+      "filename": "sklearn-common-pitfalls.rst",
+      "media_type": "text/plain",
+      "role": "curriculum",
+      "profiles": ["quick", "full"],
+      "license": "BSD-3-Clause",
+      "license_url": "https://raw.githubusercontent.com/scikit-learn/scikit-learn/main/COPYING",
+      "expected_spans": [
+        "inconsistent preprocessing",
+        "data leakage",
+        "train and test subsets",
+        "pipeline"
+      ],
+      "expected_topics": [
+        {"name": "Inconsistent preprocessing", "aliases": ["preprocessing consistency", "consistent preprocessing"]},
+        {"name": "Data leakage", "aliases": ["leakage", "training and test leakage"]},
+        {"name": "Pipelines", "aliases": ["pipeline", "model pipeline"]},
+        {"name": "Train-test separation", "aliases": ["train test split", "training and test subsets"]}
+      ]
+    },
+    {
+      "id": "mit_eigen_summary",
+      "subject": "Linear Algebra: Eigenvalues",
+      "title": "MIT OCW 18.06SC Eigenvalues and Eigenvectors summary",
+      "url": "https://ocw.mit.edu/courses/18-06sc-linear-algebra-fall-2011/1999c9f4accdbef05571a1014438f8dd_MIT18_06SCF11_Ses2.8sum.pdf",
+      "filename": "MIT18_06SCF11_Ses2.8sum.pdf",
+      "media_type": "application/pdf",
+      "role": "curriculum",
+      "profiles": ["quick", "full"],
+      "license": "CC BY-NC-SA 4.0",
+      "license_url": "https://ocw.mit.edu/terms/",
+      "expected_spans": ["eigenvalue", "eigenvector", "characteristic", "diagonal"],
+      "expected_topics": [
+        {"name": "Eigenvalues", "aliases": ["eigenvalue", "characteristic roots"]},
+        {"name": "Eigenvectors", "aliases": ["eigenvector", "eigenspaces"]},
+        {"name": "Characteristic equation", "aliases": ["characteristic polynomial", "determinant equation"]},
+        {"name": "Diagonalization", "aliases": ["diagonalisation", "diagonalizing a matrix"]}
+      ]
+    },
+    {
+      "id": "mit_eigen_problems",
+      "subject": "Linear Algebra: Eigenvalues",
+      "title": "MIT OCW 18.06SC Eigenvalue problem set",
+      "url": "https://ocw.mit.edu/courses/18-06sc-linear-algebra-fall-2011/45bdf363c6f1a564a61fdf61aa86748c_MIT18_06SCF11_Ses2.8prob.pdf",
+      "filename": "MIT18_06SCF11_Ses2.8prob.pdf",
+      "media_type": "application/pdf",
+      "role": "assessment_reference",
+      "profiles": ["full"],
+      "license": "CC BY-NC-SA 4.0",
+      "license_url": "https://ocw.mit.edu/terms/",
+      "expected_spans": ["eigenvalue", "eigenvector"]
+    },
+    {
+      "id": "mit_eigen_solutions",
+      "subject": "Linear Algebra: Eigenvalues",
+      "title": "MIT OCW 18.06SC Eigenvalue problem solutions",
+      "url": "https://ocw.mit.edu/courses/18-06sc-linear-algebra-fall-2011/a5b090d92c330788febc5b2092906af9_MIT18_06SCF11_Ses2.8sol.pdf",
+      "filename": "MIT18_06SCF11_Ses2.8sol.pdf",
+      "media_type": "application/pdf",
+      "role": "assessment_reference",
+      "profiles": ["full"],
+      "license": "CC BY-NC-SA 4.0",
+      "license_url": "https://ocw.mit.edu/terms/",
+      "expected_spans": ["eigenvalue", "eigenvector"]
+    },
+    {
+      "id": "cdc_epidemiology_lesson",
+      "subject": "Principles of Epidemiology",
+      "title": "CDC Principles of Epidemiology, Lesson 1",
+      "url": "https://archive.cdc.gov/www_cdc_gov/csels/dsepd/ss1978/lesson1/index.html",
+      "filename": "cdc-epidemiology-lesson1.html",
+      "media_type": "text/html",
+      "role": "research_reference",
+      "profiles": ["quick", "full"],
+      "license": "US Government work; source attribution retained",
+      "license_url": "https://www.cdc.gov/other/agencymaterials.html",
+      "expected_spans": ["distribution", "determinants", "health-related states", "specified populations"]
+    },
+    {
+      "id": "cdc_epidemiology_pdf",
+      "subject": "Principles of Epidemiology",
+      "title": "CDC Principles of Epidemiology in Public Health Practice",
+      "url": "https://archive.cdc.gov/www_cdc_gov/csels/dsepd/ss1978/SS1978.pdf",
+      "filename": "CDC-SS1978.pdf",
+      "media_type": "application/pdf",
+      "role": "curriculum",
+      "profiles": ["quick", "full"],
+      "license": "US Government work; source attribution retained",
+      "license_url": "https://www.cdc.gov/other/agencymaterials.html",
+      "expected_spans": ["epidemiology", "distribution", "determinants", "public health practice"],
+      "expected_topics": [
+        {"name": "Definition of epidemiology", "aliases": ["epidemiology", "epidemiologic approach"]},
+        {"name": "Distribution", "aliases": ["frequency and pattern", "person place and time"]},
+        {"name": "Determinants", "aliases": ["causes and risk factors", "determinant"]},
+        {"name": "Public health application", "aliases": ["control of health problems", "public health action"]}
+      ]
+    },
+    {
+      "id": "nasa_voyager_page",
+      "subject": "Scale of the Solar System",
+      "title": "NASA PIA22921 Voyager 2 and Solar System scale description",
+      "url": "https://science.nasa.gov/photojournal/voyager-2-and-the-scale-of-the-solar-system-artists-concept/",
+      "filename": "NASA-PIA22921.html",
+      "media_type": "text/html",
+      "role": "research_reference",
+      "profiles": ["full"],
+      "license": "NASA media guidelines; credit NASA/JPL-Caltech",
+      "license_url": "https://www.nasa.gov/nasa-brand-center/images-and-media/",
+      "expected_spans": ["150 million kilometers", "Neptune", "30 AU", "Oort Cloud"]
+    },
+    {
+      "id": "nasa_voyager_scale",
+      "subject": "Scale of the Solar System",
+      "title": "NASA/JPL-Caltech Voyager 2 and Solar System scale infographic",
+      "url": "https://assets.science.nasa.gov/dynamicimage/assets/science/psd/solar/2023/09/p/i/a/2/PIA22921.jpg?crop=faces%2Cfocalpoint&fit=clip&h=1080&w=1920",
+      "filename": "NASA-PIA22921.jpg",
+      "media_type": "image/jpeg",
+      "role": "curriculum",
+      "profiles": ["full"],
+      "license": "NASA media guidelines; credit NASA/JPL-Caltech",
+      "license_url": "https://www.nasa.gov/nasa-brand-center/images-and-media/",
+      "expected_spans": [],
+      "expected_topics": [
+        {"name": "Earth and Neptune", "aliases": ["Earth", "Neptune", "planets"]},
+        {"name": "Termination shock", "aliases": ["termination shock boundary"]},
+        {"name": "Heliopause", "aliases": ["heliopause boundary"]},
+        {"name": "Oort Cloud", "aliases": ["Oort cloud"]},
+        {"name": "Logarithmic distance ticks", "aliases": ["1 10 100 1000 10000 100000 1000000", "log scale ticks"]}
+      ],
+      "visual_gold_note": "Score only labels and logarithmic ticks visible in the infographic. Do not credit prose-only facts such as kilometres per AU or exact Oort Cloud edges."
+    }
+  ]
+}

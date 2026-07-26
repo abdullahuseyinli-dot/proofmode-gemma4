@@ -11,6 +11,7 @@ returns an explicit offline research pack.
 
 from __future__ import annotations
 
+from concurrent.futures import ThreadPoolExecutor
 from dataclasses import asdict, dataclass, field, replace
 from html import unescape
 from html.parser import HTMLParser
@@ -449,16 +450,26 @@ def prepare_research_pack(
     prepared: list[ResearchSource] = []
     warnings = list(search_pack.warnings)
     fetched_count = 0
-    for source in search_pack.sources:
-        try:
-            text = _call_page_fetcher(page_fetcher, source.url, timeout)
-            text = _clean_text(text)[:max_chars_per_source]
-            if text:
-                fetched_count += 1
-            prepared.append(replace(source, text=text))
-        except Exception as exc:
-            prepared.append(source)
-            warnings.append(f"{source.source_id} could not be fetched; using search snippet ({type(exc).__name__}).")
+    # Page downloads are independent and typically dominate research latency.
+    # Keep the pool deliberately small, then consume futures in ranked source
+    # order so source IDs, result order, and warning order remain deterministic.
+    with ThreadPoolExecutor(max_workers=min(4, len(search_pack.sources))) as executor:
+        fetches = [
+            executor.submit(_call_page_fetcher, page_fetcher, source.url, timeout)
+            for source in search_pack.sources
+        ]
+        for source, fetch in zip(search_pack.sources, fetches):
+            try:
+                text = _clean_text(fetch.result())[:max_chars_per_source]
+                if text:
+                    fetched_count += 1
+                prepared.append(replace(source, text=text))
+            except Exception as exc:
+                prepared.append(source)
+                warnings.append(
+                    f"{source.source_id} could not be fetched; "
+                    f"using search snippet ({type(exc).__name__})."
+                )
 
     status = "online" if fetched_count == len(prepared) else "partial"
     if fetched_count == 0 and not any(source.snippet for source in prepared):

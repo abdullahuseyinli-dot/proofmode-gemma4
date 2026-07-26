@@ -128,6 +128,16 @@ class GemmaClient:
                 extra_body={"top_k": 64},
             )
         except (APIConnectionError, APIError) as error:
+            latency = int((time.perf_counter() - start) * 1000)
+            self._audit(
+                "chat",
+                latency,
+                modality,
+                {
+                    "outcome": "transport_error",
+                    "error_type": type(error).__name__,
+                },
+            )
             raise GemmaUnavailable(
                 f"Local Gemma is not reachable at {self.base_url}. Run ProofMode's launcher or set PROOFMODE_GEMMA_URL to a compatible local server."
             ) from error
@@ -169,6 +179,17 @@ class GemmaClient:
                 extra_body={"top_k": 64},
             )
         except (APIConnectionError, APIError) as error:
+            latency = int((time.perf_counter() - start) * 1000)
+            self._audit(
+                schema_name,
+                latency,
+                modality,
+                {
+                    "schema": schema_name,
+                    "outcome": "transport_error",
+                    "error_type": type(error).__name__,
+                },
+            )
             raise GemmaUnavailable(
                 f"Local Gemma is not reachable at {self.base_url}. Run ProofMode's launcher or set PROOFMODE_GEMMA_URL to a compatible local server."
             ) from error
@@ -178,8 +199,28 @@ class GemmaClient:
             payload = json.loads(_strip_json_fence(raw))
             _validate_required(payload, schema)
         except (json.JSONDecodeError, StructuredOutputError) as error:
+            # A model inference happened even when its structured result cannot
+            # be consumed. Record the attempt and latency so bounded retries do
+            # not disappear from the AI audit or benchmark call counts. Never
+            # persist malformed raw output, which may contain unwanted prose.
+            self._audit(
+                schema_name,
+                latency,
+                modality,
+                {
+                    "schema": schema_name,
+                    "outcome": "invalid_output",
+                    "error_type": type(error).__name__,
+                    "output_chars": len(raw),
+                },
+            )
             raise StructuredOutputError(f"Gemma returned invalid {schema_name} JSON: {raw[:300]}") from error
-        self._audit(schema_name, latency, modality, {"schema": schema_name, "result": payload})
+        self._audit(
+            schema_name,
+            latency,
+            modality,
+            {"schema": schema_name, "outcome": "success", "result": payload},
+        )
         return GemmaResult(content=raw, latency_ms=latency, model=self.model, payload=payload)
 
     def choose_tool(
@@ -203,6 +244,13 @@ class GemmaClient:
                 extra_body={"top_k": 64},
             )
         except (APIConnectionError, APIError) as error:
+            latency = int((time.perf_counter() - start) * 1000)
+            self._audit(
+                "tool_selection",
+                latency,
+                "text",
+                {"outcome": "transport_error", "error_type": type(error).__name__},
+            )
             raise GemmaUnavailable("Gemma tool selection failed because the local server is unavailable.") from error
         latency = int((time.perf_counter() - start) * 1000)
         message = response.choices[0].message

@@ -53,6 +53,20 @@ We chose prompt engineering and retrieval over fine-tuning because the product n
 
 A Windows launcher starts or reuses Gemma and Streamlit, opens an app-style window, and provides a draggable always-on-top assistant bubble. The complete demo works locally without hosted-model quota or a login.
 
+### Evaluation on real study material
+
+We built a reproducible service-level harness around downloaded, hashed material from scikit-learn, MIT OpenCourseWare, the CDC and NASA/JPL-Caltech. Its gold topics, facts, rubrics, strong answers and misconceptions are inspectable and human-authored; Gemma never validates its own answer key. Anyone with the local E4B server can reproduce the quick profile with:
+
+```powershell
+.\.venv\Scripts\python.exe .\benchmarks\run_benchmark.py --profile quick
+```
+
+Against documented ablations in the measured single-repeat run, document gold-span recall rose from 0.625 to 0.8125, and calendar conflicts fell from 170 minutes to zero while retaining full allocation and 12 alarms. Gemma rubric scoring reduced mean absolute error against human labels from 0.1667 to 0.0583. Four adversarial citation fixtures that the old lexical fallback marked false-safe were all held after verification hardening (4/4 to 0/4 false-safe). Normalized Teach-Back scoring reduced error from 0.1833 to 0.0367; importantly, a no-learning-gain attack earned zero instead of 100 activity-reward units.
+
+A separate full-input chain completed 16/16 recorded baseline/product rows across scikit-learn text, MIT and CDC PDFs, and a NASA infographic: every product quiz consumed the course map generated from its real input, and all four product paths completed with valid schemas and MCQs. The NASA map matched only two of five named visual concepts, while its quiz matched zero expected topic terms under the exact lexical metric. This confirms that image-to-map-to-quiz integration ran, not comprehensive visual understanding.
+
+These are small, descriptive prototype measurements, not a learner trial or a claim of improved retention. Live search and local inference vary. The committed [benchmark report](benchmarks/RESULTS.md) contains aggregate results, source hashes, recorded failure excerpts and limitations. Per-run raw rows and environment files remain in the git-ignored local `benchmark_artifacts/` directory unless attached separately.
+
 ### Impact
 
 ProofMode changes the key question from “Did you spend time?” to “What can you now retrieve, apply, and teach?” That makes planning adaptive, reminders purposeful, peer competition defensible, and Gemma central to a behaviour-changing learning loop.

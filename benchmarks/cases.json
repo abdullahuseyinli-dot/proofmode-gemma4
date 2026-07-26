@@ -1,0 +1,185 @@
+{
+  "version": 1,
+  "assessment": [
+    {
+      "id": "ml-leakage",
+      "subject": "Machine Learning Reliability",
+      "source_id": "sklearn_common_pitfalls",
+      "topic": "Data leakage and consistent preprocessing",
+      "question": "Why can fitting a scaler or feature selector on the full dataset before the train-test split make evaluation misleading, and how should a pipeline prevent it?",
+      "rubric": [
+        "test-set information must not influence fitting",
+        "fit preprocessing only on training data",
+        "apply the fitted transform to held-out data",
+        "use a pipeline to keep fitting inside validation folds"
+      ],
+      "expected_terms": ["test", "training", "fit", "pipeline"],
+      "answers": [
+        {
+          "label": "strong",
+          "gold": 0.95,
+          "profiles": ["quick", "full"],
+          "text": "If the scaler or selector is fitted before splitting, its parameters use the held-out samples, so information about the test distribution influences training and the reported score can be optimistic. Fit every learned preprocessing step only on each training fold, then use that fitted transform on validation or test data. A pipeline enforces that order during cross-validation."
+        },
+        {
+          "label": "misconception",
+          "gold": 0.15,
+          "profiles": ["quick", "full"],
+          "text": "Scaling leaks data because multiplication changes the labels. The safest fix is to fit the scaler separately on the test set so its values stay accurate."
+        },
+        {
+          "label": "partial",
+          "gold": 0.60,
+          "profiles": ["full"],
+          "text": "The test set should remain separate. Split first and use a pipeline, although I am not sure whether the transform itself must be fitted again inside every cross-validation fold."
+        }
+      ]
+    },
+    {
+      "id": "la-diagonalization",
+      "subject": "Linear Algebra: Eigenvalues",
+      "source_id": "mit_eigen_summary",
+      "topic": "Eigenvalues, eigenvectors and diagonalization",
+      "question": "When is an n by n matrix diagonalizable, and how are the matrices S and Lambda constructed?",
+      "rubric": [
+        "requires n linearly independent eigenvectors",
+        "columns of S are those eigenvectors",
+        "Lambda has corresponding eigenvalues on its diagonal",
+        "A equals S Lambda S inverse"
+      ],
+      "expected_terms": ["independent", "eigenvectors", "columns", "diagonal"],
+      "answers": [
+        {
+          "label": "strong",
+          "gold": 0.95,
+          "profiles": ["quick", "full"],
+          "text": "An n by n matrix is diagonalizable when it has n linearly independent eigenvectors. Put those eigenvectors in the columns of S and put their corresponding eigenvalues in the same order down the diagonal of Lambda. Then A = S Lambda S^{-1}. Repeated eigenvalues are allowed if there are still enough independent eigenvectors."
+        },
+        {
+          "label": "misconception",
+          "gold": 0.10,
+          "profiles": ["quick", "full"],
+          "text": "Every square matrix is diagonalizable. S contains the eigenvalues and Lambda contains the original rows of A."
+        },
+        {
+          "label": "partial",
+          "gold": 0.60,
+          "profiles": ["full"],
+          "text": "Use eigenvectors as columns of S and eigenvalues in Lambda, but I have not stated the independence condition or the exact factorization."
+        }
+      ]
+    },
+    {
+      "id": "cdc-definition",
+      "subject": "Principles of Epidemiology",
+      "source_id": "cdc_epidemiology_pdf",
+      "topic": "Definition and uses of epidemiology",
+      "question": "Define epidemiology and explain what distribution, determinants, and application mean in that definition.",
+      "rubric": [
+        "study of health-related states or events in specified populations",
+        "distribution covers frequency and pattern by person place and time",
+        "determinants are causes and risk factors",
+        "application means using findings to control health problems"
+      ],
+      "expected_terms": ["population", "distribution", "determinants", "control"],
+      "answers": [
+        {
+          "label": "strong",
+          "gold": 0.95,
+          "profiles": ["quick", "full"],
+          "text": "Epidemiology studies the distribution and determinants of health-related states or events in specified populations and applies that study to control health problems. Distribution asks how often and in what patterns disease occurs by person, place, and time. Determinants are causes and risk factors, and application turns the evidence into public-health action."
+        },
+        {
+          "label": "misconception",
+          "gold": 0.15,
+          "profiles": ["quick", "full"],
+          "text": "Epidemiology is the treatment of one sick patient by choosing a drug. Distribution means delivering the medicine and determinants are the patient's appointment times."
+        },
+        {
+          "label": "partial",
+          "gold": 0.58,
+          "profiles": ["full"],
+          "text": "Epidemiology studies disease patterns in populations and tries to find risk factors. It can guide prevention, but I have not explained the formal ideas of distribution and application."
+        }
+      ]
+    }
+  ],
+  "research": [
+    {
+      "id": "research-leakage",
+      "subject": "Machine Learning Reliability",
+      "question": "Why does fitting preprocessing before a train-test split cause data leakage, and how does a scikit-learn Pipeline prevent it?",
+      "optimized_query": "scikit-learn data leakage preprocessing Pipeline train test",
+      "preferred_domain": "scikit-learn.org",
+      "expected_domains": ["scikit-learn.org"],
+      "expected_terms": ["training", "test", "fit", "pipeline"],
+      "profiles": ["quick", "full"]
+    },
+    {
+      "id": "research-diagonalization",
+      "subject": "Linear Algebra: Eigenvalues",
+      "question": "What condition on eigenvectors makes a square matrix diagonalizable, and how is the diagonalization formed?",
+      "optimized_query": "MIT OCW eigenvectors diagonalizable S Lambda independent",
+      "preferred_domain": "ocw.mit.edu",
+      "expected_domains": ["ocw.mit.edu"],
+      "expected_terms": ["independent", "eigenvectors", "diagonal", "columns"],
+      "profiles": ["quick", "full"]
+    },
+    {
+      "id": "research-epidemiology",
+      "subject": "Principles of Epidemiology",
+      "question": "How does the CDC define epidemiology, including distribution, determinants, and application?",
+      "optimized_query": "CDC epidemiology definition distribution determinants application",
+      "preferred_domain": "cdc.gov",
+      "expected_domains": ["cdc.gov"],
+      "expected_terms": ["population", "distribution", "determinants", "control"],
+      "profiles": ["quick", "full"]
+    },
+    {
+      "id": "research-voyager-scale-prose",
+      "subject": "Scale of the Solar System",
+      "question": "According to NASA's PIA22921 page, what is one astronomical unit in kilometres, roughly how far is Neptune from the Sun in AU, and what Oort Cloud range is described?",
+      "optimized_query": "NASA PIA22921 AU kilometres Neptune Oort Cloud range",
+      "preferred_domain": "science.nasa.gov",
+      "expected_domains": ["science.nasa.gov"],
+      "expected_terms": ["150 million", "30 AU", "1000 AU", "100000 AU"],
+      "profiles": ["full"]
+    }
+  ],
+  "teachback": [
+    {
+      "id": "teachback-leakage",
+      "subject": "Machine Learning Reliability",
+      "topic": "Data leakage",
+      "topic_record": {
+        "name": "Data leakage",
+        "description": "Information from held-out data improperly influences model fitting or selection.",
+        "exam_weight": 0.7,
+        "difficulty": 0.65,
+        "mastery": 0.35,
+        "confidence": 0.45,
+        "prerequisite_centrality": 0.7,
+        "estimated_minutes": 55,
+        "prerequisites": ["train-test split"],
+        "evidence": ["scikit-learn common pitfalls"],
+        "uncertainty": "Benchmark topic record"
+      },
+      "pre_question": "A student selects features using the entire dataset and then cross-validates a classifier. Explain the evaluation problem.",
+      "post_question": "A student imputes missing values before creating validation folds. Apply the same principle and give a safe workflow.",
+      "rubric": [
+        "identifies validation information leakage",
+        "fits learned transformations only on training folds",
+        "applies the fitted transformation to validation data",
+        "explains optimistic evaluation risk"
+      ],
+      "pre_answer": "It might be unfair because the classifier sees too many features.",
+      "pre_gold": 0.25,
+      "explanation": "Feature selection and imputation learn parameters from data. If they are fitted before the split, held-out samples influence the learned transformation and the validation estimate can become optimistic. Put the transformation and estimator in one pipeline; on every fold, fit the pipeline only on the training fold and transform the validation fold with those fitted parameters.",
+      "quality_gold": 0.92,
+      "post_answer": "Imputation learns values such as means, so computing them before the folds lets validation observations influence training. Build a pipeline containing the imputer and model. For each fold fit both only on its training partition, then transform and score its held-out partition.",
+      "post_gold": 0.92,
+      "expected_terms": ["training", "validation", "fit", "pipeline"],
+      "profiles": ["quick", "full"]
+    }
+  ]
+}
