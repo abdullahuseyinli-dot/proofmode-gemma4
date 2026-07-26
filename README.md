@@ -4,6 +4,8 @@
 
 ProofMode turns a student's calendar, target mark, and existing notes into an adaptive study plan. A timer ending is not treated as learning: the student submits a **Learning Receipt** through retrieval answers, confidence, worked notes, or a teach-back. Mastery evidence then changes the calendar.
 
+![ProofMode cockpit](assets/proofmode-cockpit.png)
+
 The prototype was built for **Build with Gemma: GDGoC Aberdeen**. It runs Google's instruction-tuned Gemma 4 E4B QAT model locally through llama.cpp, so private notes and assessment evidence do not need to leave the laptop.
 
 ## What works
